@@ -1,15 +1,13 @@
 import React from "react";
 import "./App.css";
 import Navbar from "./components/Navbar";
-import Results from "./components/Results";
-import SearchInput from "./components/SearchInput";
+import SearchContainer from "./components/SearchContainer";
 
 const App = () => {
   return (
     <>
       <Navbar />
-      <SearchInput/>
-      <Results />
+      <SearchContainer />
     </>
   );
 };

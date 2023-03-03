@@ -23,9 +23,15 @@ query TopMedia($type: MediaType, $page: Int) {
 `;
 
 export const SearchMediaQuery = gql`
-  query SearchAnime($search: String!) {
-    Page {
-      media(type: MANGA, search: $search) {
+  query SearchAnime($search: String!, $type: MediaType, $page: Int) {
+    Page (page: $page, perPage: 10) {
+      pageInfo {
+        total
+        currentPage
+        lastPage
+        hasNextPage
+      }
+      media(search: $search,type: $type,  sort: POPULARITY_DESC) {
         id
         title {
           romaji
@@ -37,3 +43,4 @@ export const SearchMediaQuery = gql`
     }
   }
 `;
+
