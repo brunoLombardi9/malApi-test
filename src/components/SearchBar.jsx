@@ -42,7 +42,7 @@ const SearchBar = ({
         ))}
       </ToggleButtonGroup>
 
-      <Button type="submit" variant="contained">
+      <Button type="submit" variant="contained" disabled={!searchTerm}>
         Search
       </Button>
     </Box>

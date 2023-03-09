@@ -58,26 +58,6 @@ const Results = ({
       </Grid>
 
       <Box>
-        {/* <Button
-            variant="contained"
-            disabled={page === 1}
-            value={page - 1}
-            onClick={onPageChange}
-          >
-            Previous
-          </Button>
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            variant="contained"
-            disabled={page === totalPages}
-            value={page + 1}
-            onClick={onPageChange}
-          >
-            Next
-          </Button> */}
-
         <Pagination
           count={totalPages}
           page={page}

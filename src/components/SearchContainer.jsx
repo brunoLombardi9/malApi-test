@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import Results from "./Results";
-import { useLazyQuery } from "@apollo/client";
-import { SEARCH_ANIME } from "../utilities/queries";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { GET_TOP_ANIME, SEARCH_ANIME } from "../utilities/queries";
 import { Grid } from "@mui/material";
 
 const SearchContainer = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [info, setInfo] = useState({});
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [type, setType] = useState("ANIME");
@@ -15,7 +16,18 @@ const SearchContainer = () => {
   const [format, setFormat] = useState("");
   const [status, setStatus] = useState("");
 
-  const [searchAnime, { loading, error, data }] = useLazyQuery(SEARCH_ANIME);
+  const topData = useQuery(GET_TOP_ANIME);
+  const [searchAnime, queryData] = useLazyQuery(SEARCH_ANIME, {
+    variables: type,
+  });
+
+  useEffect(() => {
+    setInfo(queryData);
+  }, [queryData]);
+
+  useEffect(() => {
+    setInfo(topData);
+  }, [topData]);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -59,9 +71,9 @@ const SearchContainer = () => {
         onSearch={handleSearch}
       />
       <Results
-        loading={loading}
-        error={error}
-        data={data}
+        loading={info.loading}
+        error={info.error}
+        data={info.data}
         page={page}
         perPage={perPage}
         onPageChange={handlePageChange}
