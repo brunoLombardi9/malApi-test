@@ -16,7 +16,7 @@ const Navbar = () => {
       }}
     >
       <Box sx={{ width: "100px" }}>
-        <Image src={"/logoMascara.png"} duration={0}/>
+        <Image src={"/Logo_kamado.png"} duration={0}/>
       </Box>
 
       <Box gap={3} sx={{ display: "flex" }}>

@@ -1,91 +1,99 @@
-import { useLazyQuery } from "@apollo/client";
-import { Box, Button, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { SearchMediaQuery } from "../utilities/queries";
+import {
+  Box,
+  Button,
+  FormHelperText,
+  Grid,
+  MenuItem,
+  Pagination,
+  Select,
+} from "@mui/material";
+import React from "react";
 import Card from "./Card";
 import Loading from "./Loading";
 
-const Results = ({ title, page, type, search, changePage }) => {
-  const [results, setResults] = useState([]);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const handleChangePage = changePage;
-  const [searchMedia, queryData] = useLazyQuery(SearchMediaQuery);
+const Results = ({
+  loading,
+  error,
+  data,
+  page,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+}) => {
+  if (loading) {
+    return <Loading />;
+  }
 
-  useEffect(() => {
-    if (title === "") return;
-    searchMedia({ variables: { search: title, page: 1, type: type } });
-  }, [search]);
+  if (error) {
+    return <p>Error</p>;
+  }
 
-  useEffect(() => {
-    if (!queryData.data) return;
-    setResults((prev) => (prev = queryData.data.Page.media));
-    setHasNextPage((prev) => (prev = queryData.data.Page.pageInfo.hasNextPage));
-  }, [queryData.data]);
-
-  useEffect(() => {
-    if (!queryData.data) return;
-    console.log(title, page, type);
-    setResults([]);
-    searchMedia({ variables: { search: title, page: page, type: type } });
-  }, [page]);
-
-  console.log(results);
+  if (!data || !data.Page || !data.Page.media) {
+    return <p>No results found</p>;
+  }
+  const resultsPerpage = [5, 10, 15];
+  const totalPages = Math.ceil(data.Page.media.length / perPage);
+  const start = (page - 1) * perPage;
+  const end = start + perPage;
+  const media = data.Page.media.slice(start, end);
 
   return (
     <Grid
+      gap={3}
       container
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignContent: "center",
-        marginTop: "30px",
-        marginBottom: "30px",
-      }}
+      sx={{ display: "flex", justifyContent: "center", alignContent: "center" }}
     >
-      {queryData.loading && <Loading />}
-      {results.length > 0 && !queryData.loading && (
-        <>
-          <Grid
-            container
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            gap={4}
-          >
-            {results.map((item) => (
-              <Card item={item} key={item.id} />
-            ))}
-          </Grid>
+      <Grid
+        container
+        gap={3}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignContent: "center",
+        }}
+      >
+        {media.map((item) => (
+          <Card key={item.id} item={item} />
+        ))}
+      </Grid>
 
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-evenly",
-              marginTop: "20px",
-              width: "250px",
-            }}
+      <Box>
+        {/* <Button
+            variant="contained"
+            disabled={page === 1}
+            value={page - 1}
+            onClick={onPageChange}
           >
-            <Button
-              variant="contained"
-              disabled={page <= 1}
-              onClick={() => handleChangePage("down")}
-              sx={{ width: "100px" }}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="contained"
-              disabled={!hasNextPage}
-              onClick={() => handleChangePage("up")}
-              sx={{ width: "100px" }}
-            >
-              Next
-            </Button>
-          </Box>
-        </>
-      )}
+            Previous
+          </Button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+          <Button
+            variant="contained"
+            disabled={page === totalPages}
+            value={page + 1}
+            onClick={onPageChange}
+          >
+            Next
+          </Button> */}
+
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={onPageChange}
+          color="secondary"
+        />
+
+        <Select value={perPage} onChange={onPerPageChange} displayEmpty>
+          {resultsPerpage.map((r) => (
+            <MenuItem key={r} value={r}>
+              {r}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>Results per page</FormHelperText>
+      </Box>
     </Grid>
   );
 };

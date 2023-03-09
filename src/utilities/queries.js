@@ -1,46 +1,19 @@
 import { gql } from "@apollo/client";
 
-export const TopMediaQuery = gql`
-query TopMedia($type: MediaType, $page: Int) {
-  Page(page: $page, perPage: 10) {
-    pageInfo {
-      total
-      currentPage
-      lastPage
-      hasNextPage
-    }
-    media(type: $type, sort: POPULARITY_DESC) {
-      id
-      coverImage {
-        large
-      }
-      title {
-        romaji
-      }
-    }
-  }
-}
-`;
-
-export const SearchMediaQuery = gql`
-  query SearchAnime($search: String!, $type: MediaType, $page: Int) {
-    Page (page: $page, perPage: 10) {
-      pageInfo {
-        total
-        currentPage
-        lastPage
-        hasNextPage
-      }
-      media(search: $search,type: $type,  sort: POPULARITY_DESC) {
+export const SEARCH_ANIME = gql`
+  query SearchAnime($searchTerm: String!, $type: MediaType) {
+    Page {
+      media(search: $searchTerm, type: $type) {
         id
         title {
           romaji
+          english
         }
-        coverImage {
+        coverImage{
           large
         }
+        description
       }
     }
   }
 `;
-

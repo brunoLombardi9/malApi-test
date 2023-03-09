@@ -1,50 +1,51 @@
-import { Box, Button, Grid, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
+import {
+  Box,
+  Button,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import React from "react";
+import { types, years } from "../utilities/searchOptions";
 
 const SearchBar = ({
+  searchTerm,
   onInputChange,
-  activateSearch,
-  search,
+  onTypeChange,
   type,
-  changeType,
+  onSearch,
 }) => {
-  const inputRef = useRef();
-  const saveData = onInputChange;
-  const handleChangeType = changeType;
-  const setSearch = activateSearch;
-
-  useEffect(() => {
-    if (!search) return;
-    const title = inputRef.current.value;
-    saveData(title, type);
-  }, [search]);
-
-  function formHandler(e) {
-    e.preventDefault();
-    setSearch();
-  }
-
   return (
-    <Grid container sx={{ marginTop: "10px" }}>
-      <Box
-        component="form"
-        onSubmit={formHandler}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginLeft: "10px",
-        }}
-        gap={2}
+    <Box
+      component="form"
+      onSubmit={onSearch}
+      sx={{
+        display: "flex",
+        justifyContent: "space-evenly",
+        alignItems: "center",
+        padding: "20px",
+      }}
+    >
+      <TextField type="text" value={searchTerm} onChange={onInputChange} />
+
+      <ToggleButtonGroup
+        color="primary"
+        value={type}
+        exclusive
+        onChange={onTypeChange}
+        aria-label="Platform"
       >
-        <TextField inputRef={inputRef} required />
-        <Button variant="contained" type="submit">
-          <SearchIcon />
-        </Button>
-      </Box>
-      <Button onClick={handleChangeType}>Change Type, now seeing {type}</Button>
-    </Grid>
+        {types.map((t) => (
+          <ToggleButton key={t} value={t}>
+            {t}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+
+      <Button type="submit" variant="contained">
+        Search
+      </Button>
+    </Box>
   );
 };
 
